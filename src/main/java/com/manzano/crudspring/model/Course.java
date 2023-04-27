@@ -1,5 +1,8 @@
 package com.manzano.crudspring.model;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.DialectOverride.Where;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -12,6 +15,8 @@ import lombok.Data;
 
 @Data
 @Entity
+@SQLDelete(sql = "UPDATE Course SET status = 'Inativo' WHERE id = ?")
+@org.hibernate.annotations.Where(clause = "status = 'Ativo'")
 public class Course {
 
   @Id
@@ -24,4 +29,7 @@ public class Course {
 
   @Column(length = 10, nullable = false)
   private String category;
+
+  @Column(length = 10, nullable = false)
+  private String status = "Ativo";
 }
