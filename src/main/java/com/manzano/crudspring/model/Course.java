@@ -15,7 +15,6 @@ import lombok.Data;
 public class Course {
 
   @Id
-  @JsonIgnore
   @JsonProperty("_id")
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
