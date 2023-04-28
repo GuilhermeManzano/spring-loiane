@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.manzano.crudspring.model.Course;
+import com.manzano.crudspring.dto.CursoDTO;
 import com.manzano.crudspring.service.CourseService;
 
 @RestController
@@ -23,22 +23,22 @@ public class CursoController {
   private CourseService courseService;
 
   @GetMapping
-  public List<Course> list() {
+  public List<CursoDTO> list() {
     return courseService.list();
   }
 
   @PostMapping
-  public Course create(@RequestBody Course course) {
+  public CursoDTO create(@RequestBody CursoDTO course) {
     return courseService.create(course);
   }
 
   @GetMapping("/{id}")
-  public Course findById(@PathVariable Long id) {
+  public CursoDTO findById(@PathVariable Long id) {
     return courseService.findById(id);
   }
 
   @PutMapping("/{id}")
-  public Course update(@PathVariable Long id, @RequestBody Course course) {
+  public CursoDTO update(@PathVariable Long id, @RequestBody CursoDTO course) {
     return courseService.update(id, course);
   }
 

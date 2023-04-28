@@ -1,11 +1,14 @@
 package com.manzano.crudspring.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import com.manzano.crudspring.model.Course;
+
+import com.manzano.crudspring.dto.CursoDTO;
+import com.manzano.crudspring.dto.mapper.CourseMapper;
 import com.manzano.crudspring.repository.CourseRepository;
 
 import exception.RecordNotFoundException;
@@ -18,25 +21,28 @@ public class CourseService {
   @Autowired
   private CourseRepository courseRepository;
 
-  public List<Course> list() {
-    return courseRepository.findAll();
+  private CourseMapper courseMapper;
+
+  public List<CursoDTO> list() {
+    return courseRepository.findAll().stream().map(courseMapper::toDto).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
   }
 
-  public Course create(@RequestBody Course course) {
-    return courseRepository.save(course);
+  public CursoDTO create(@RequestBody CursoDTO course) {
+    return courseMapper.toDto(courseRepository.save(courseMapper.toEntity(course)));
   }
 
-  public Course findById(@PathVariable Long id) {
-    return courseRepository.findById(id).orElseThrow(() -> new RecordNotFoundException(id));
+  public CursoDTO findById(@PathVariable Long id) {
+    return courseRepository.findById(id).map(courseMapper::toDto).orElseThrow(() -> new RecordNotFoundException(id));
   }
 
-  public Course update(@PathVariable Long id, @RequestBody Course course) {
+  public CursoDTO update(@PathVariable Long id, @RequestBody CursoDTO course) {
     return courseRepository.findById(id)
         .map(recordFound -> {
-          recordFound.setName(course.getName());
-          recordFound.setCategory(course.getCategory());
+          recordFound.setName(course.name());
+          recordFound.setCategory(course.category());
           return courseRepository.save(recordFound);
         })
+        .map(courseMapper::toDto)
         .orElseThrow(() -> new RecordNotFoundException(id));
   }
 
