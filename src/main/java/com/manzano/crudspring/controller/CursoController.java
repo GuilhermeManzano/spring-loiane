@@ -29,22 +29,22 @@ public class CursoController {
   }
 
   @PostMapping
-  public ResponseEntity<Course> create(@RequestBody Course course) {
+  public Course create(@RequestBody Course course) {
     return courseService.create(course);
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Course> findById(@PathVariable Long id) {
+  public Course findById(@PathVariable Long id) {
     return courseService.findById(id);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Course> update(@PathVariable Long id, @RequestBody Course course) {
+  public Course update(@PathVariable Long id, @RequestBody Course course) {
     return courseService.update(id, course);
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity delete(@PathVariable Long id) {
-    return courseService.delete(id);
+  public void delete(@PathVariable Long id) {
+    courseService.delete(id);
   }
 }

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.manzano.crudspring.model.Course;
 import com.manzano.crudspring.repository.CourseRepository;
 
+import exception.RecordNotFoundException;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,34 +24,30 @@ public class CourseService {
     return courseRepository.findAll();
   }
 
-  public ResponseEntity<Course> create(@RequestBody Course course) {
-    var save = courseRepository.save(course);
-    return ResponseEntity.status(HttpStatus.CREATED).body(save);
+  public Course create(@RequestBody Course course) {
+    return courseRepository.save(course);
   }
 
-  public ResponseEntity<Course> findById(@PathVariable Long id) {
-    return courseRepository.findById(id)
-        .map(record -> ResponseEntity.ok().body(record))
-        .orElse(ResponseEntity.notFound().build());
+  public Course findById(@PathVariable Long id) {
+    return courseRepository.findById(id).orElseThrow(() -> new RecordNotFoundException(id));
   }
 
-  public ResponseEntity<Course> update(@PathVariable Long id, @RequestBody Course course) {
+  public Course update(@PathVariable Long id, @RequestBody Course course) {
     return courseRepository.findById(id)
         .map(record -> {
           record.setName(course.getName());
           record.setCategory(course.getCategory());
-          Course updated = courseRepository.save(record);
-          return ResponseEntity.status(HttpStatus.CREATED).body(updated);
+          return courseRepository.save(record);
         })
-        .orElse(ResponseEntity.notFound().build());
+        .orElseThrow(() -> new RecordNotFoundException(id));
   }
 
-  public ResponseEntity delete(@PathVariable Long id) {
-    return courseRepository.findById(id)
-        .map(record -> {
-          courseRepository.deleteById(id);
-          return ResponseEntity.noContent().<Void>build();
-        })
-        .orElse(ResponseEntity.notFound().build());
+  public void delete(@PathVariable Long id) {
+    var getId = courseRepository.findById(id);
+
+    if (getId.isPresent()) {
+      courseRepository.delete(getId.get());
+    } 
+    throw new RecordNotFoundException(id);
   }
 }
